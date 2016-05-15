@@ -1,4 +1,7 @@
 
-project(BdmTest)
+project(libbdm)
 
-add_executable(BdmTest BdmLoader.cpp BdmLoader.hpp BdmTest.cpp)
+include_directories(src)
+
+add_subdirectory(src/bdm)
+add_subdirectory(src/bdminfo)
