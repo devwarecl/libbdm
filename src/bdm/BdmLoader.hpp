@@ -73,6 +73,7 @@ namespace bdm {
         }
     };
 
+    typedef Array<float, 4>            Color;
     typedef Array<float, 3>            Vertex;
     typedef Array<std::uint16_t, 3>    Face;
     typedef Array<float, 2>            TexCoord;

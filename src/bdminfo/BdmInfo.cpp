@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
 
     //  output normals
     std::cout << "\nNormals (?)" << std::endl;
-    auto normals = bdm::read<bdm::Vertex>(fs_bdm, header.faceCount);
+    auto normals = bdm::read<bdm::TexCoord>(fs_bdm, header.faceCount * 3 );
     for (auto value : normals) {
         std::cout << value << std::endl;
     }
