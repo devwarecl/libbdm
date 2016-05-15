@@ -6,18 +6,112 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <list>
+#include <vector>
 
 #include "BdmLoader.hpp"
 
-const int BDM_TEXTURENAME_SEPARATOR = 0x0A;    // New line character
+namespace bdm {
+    // New line character
+    static const int Separator = 0x0A;
 
-typedef struct {
-    std::uint16_t texture_count;
-    std::uint16_t unknown_02;
-    std::uint16_t unknown_03;
-    std::uint16_t unknown_04;
-    std::uint16_t unknown_05;
-} BDMHEADER;
+    struct Header {
+        std::uint16_t textureCount;
+        std::uint16_t vertexCount;
+        std::uint16_t unknown03;
+        std::uint16_t faceCount;
+        std::uint16_t unknown05;
+
+        friend std::ostream& operator<< (std::ostream& os, const Header &header) {
+            os << "Texture Count: " << header.textureCount << std::endl;
+            os << "Vertex Count: " << header.vertexCount << std::endl;
+            os << "Unknown03: " << header.unknown03 << std::endl;
+            os << "Face Count (?): " << header.faceCount << std::endl;
+            os << "Unknown05: " << header.unknown05 << std::endl;
+
+            return os;
+        }
+    };
+    
+    template<typename Field>
+    Field read(std::fstream &fs) {
+        Field field;
+        
+        fs.read(reinterpret_cast<char*>(&field), sizeof(Field));
+
+        return field;
+    }
+
+    std::vector<std::string> readTextures(std::fstream &fs, const Header &header) {
+        std::vector<std::string> textures(header.textureCount);
+    
+        // output texture filenames
+        for (int i=0; i<header.textureCount; ++i) {
+            bool done = false;
+            std::string textureName = "";
+
+            while (!done) {
+                int character = fs.get();
+
+                if (character == bdm::Separator) {
+                    done = true;
+                } else {
+                    textureName += static_cast<char>(character);
+                }
+            }
+
+            textures.push_back(textureName);
+        }
+
+        return textures;
+    }
+
+    struct Vertex {
+        float x, y, z;
+
+        friend std::ostream& operator << (std::ostream &os, const Vertex &v) {
+            std::cout << v.x << ", " << v.y << ", " << v.z;
+
+            return os;
+        }
+    };
+
+    struct Face {
+        std::uint16_t v1, v2, v3;
+
+        friend std::ostream& operator << (std::ostream &os, const Face &f) {
+            std::cout << f.v1 << ", " << f.v2 << ", " << f.v3;
+
+            return os;
+        }
+    };
+
+    std::vector<Vertex> readVertices(std::fstream &fs, const Header &header) {
+        std::vector<Vertex> floats;
+
+        int total = header.vertexCount;
+
+        while (total-- > 0) {
+            Vertex value = read<Vertex>(fs);
+            floats.push_back(value);
+        }
+
+        return floats;
+    }
+
+    std::vector<Face> readFaces(std::fstream &fs, const Header &header) {
+        std::vector<Face> faces;
+
+        int total = header.faceCount;
+
+        while (total-- > 0) {
+            auto face = read<Face>(fs);
+            faces.push_back(face);
+        }
+
+        return faces;
+    }
+}
 
 int main(int argc, char **argv) {
     const std::string filename = argv[1];
@@ -31,29 +125,27 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    // output known header data
-    BDMHEADER header = {0};
-    fs_bdm.read((char*)&header, sizeof(BDMHEADER));
+    bdm::Header header = bdm::read<bdm::Header>(fs_bdm);
 
-    std::cout << "File: " << filename << std::endl;
-    std::cout << "Texture count: " << header.texture_count << std::endl;
+    // output known header data
+    std::cout << header << std::endl;
 
     // output texture filenames
-    for (int i=0; i<header.texture_count; ++i) {
-        bool done = false;
-        std::string textureName = "";
+    auto textures = bdm::readTextures(fs_bdm, header);
+    for (auto texture : textures) {
+        std::cout << texture << std::endl;
+    }
 
-        while (!done) {
-            int character = fs_bdm.get();
+    // output vertex data
+    auto vertices = bdm::readVertices(fs_bdm, header);
+    for (auto vertex : vertices) {
+        std::cout << vertex << std::endl;
+    }
 
-            if (character == BDM_TEXTURENAME_SEPARATOR) {
-                done = true;
-            } else {
-                textureName += static_cast<char>(character);
-            }
-        }
-
-        std::cout << "Texture " << (i + 1) << ": " << textureName << std::endl;
+    // output face data
+    auto faces = bdm::readFaces(fs_bdm, header);
+    for (auto face : faces) {
+        std::cout << face << std::endl;
     }
 
     return 0;
