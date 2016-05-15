@@ -33,7 +33,7 @@ namespace bdm {
     };
     
     template<typename Field>
-    Field read(std::fstream &fs) {
+    Field read(std::istream &fs) {
         Field field = {};
     
         if (fs.eof()) {
@@ -46,7 +46,7 @@ namespace bdm {
     }
 
     template<typename Field>
-    std::vector<Field> read(std::fstream &fs, int count) {
+    std::vector<Field> read(std::istream &fs, int count) {
         std::vector<Field> fields;
 
         while ( (--count >= 0) && !fs.eof() ) {
@@ -56,7 +56,7 @@ namespace bdm {
         return fields;
     }
 
-    std::vector<std::string> readTextures(std::fstream &fs, const Header &header);
+    std::vector<std::string> readTextures(std::istream &fs, const Header &header);
 
     template<typename Type, int Count>
     struct Array {

@@ -2,7 +2,7 @@
 #include "BdmLoader.hpp"
 
 namespace bdm {
-    std::vector<std::string> readTextures(std::fstream &fs, const Header &header) {
+    std::vector<std::string> readTextures(std::istream &fs, const Header &header) {
         std::vector<std::string> textures(header.textureCount);
     
         // output texture filenames
