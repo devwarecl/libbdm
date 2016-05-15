@@ -49,10 +49,17 @@ int main(int argc, char **argv) {
         std::cout << face << std::endl;
     }
 
-    // 
-    std::cout << "\nPoints (?)" << std::endl;
-    auto unknowns = bdm::read<bdm::Vertex>(fs_bdm, 1000000);
-    for (auto value : unknowns) {
+    //  output texture coordinate
+    std::cout << "\nTexture Coordinate" << std::endl;
+    auto texcoords = bdm::read<bdm::TexCoord>(fs_bdm, header.faceCount * 3);
+    for (auto value : texcoords) {
+        std::cout << value << std::endl;
+    }
+
+    //  output normals
+    std::cout << "\nNormals (?)" << std::endl;
+    auto normals = bdm::read<bdm::Vertex>(fs_bdm, header.faceCount);
+    for (auto value : normals) {
         std::cout << value << std::endl;
     }
 
