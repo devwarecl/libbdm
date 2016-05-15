@@ -36,16 +36,32 @@ int main(int argc, char **argv) {
     }
 
     // output vertex data
-    auto vertices = bdm::readVertices(fs_bdm, header);
+    std::cout << "\nVertices" << std::endl;
+    auto vertices = bdm::read<bdm::Vertex>(fs_bdm, header.vertexCount);
     for (auto vertex : vertices) {
         std::cout << vertex << std::endl;
     }
 
     // output face data
-    auto faces = bdm::readFaces(fs_bdm, header);
+    std::cout << "\nFaces" << std::endl;
+    auto faces = bdm::read<bdm::Face>(fs_bdm, header.faceCount);
     for (auto face : faces) {
         std::cout << face << std::endl;
     }
+
+    // 
+    std::cout << "\nPoints (?)" << std::endl;
+    auto unknowns = bdm::read<bdm::Vertex>(fs_bdm, 1000000);
+    for (auto value : unknowns) {
+        std::cout << value << std::endl;
+    }
+
+    // output texture coordinates
+    // std::cout << "\nTex Coords (?)" << std::endl;
+    // auto texcoords = bdm::read<bdm::Array<float, 4>>(fs_bdm, header.vertexCount);
+    // for (auto texcoord : texcoords) {
+    //     std::cout << texcoord << std::endl;
+    // }
 
     return 0;
 }

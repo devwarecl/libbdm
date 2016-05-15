@@ -4,6 +4,7 @@
 #ifndef __bdmloader__
 #define __bdmloader__
 
+#include <cassert>
 #include <vector>
 #include <list>
 #include <fstream>
@@ -33,39 +34,48 @@ namespace bdm {
     
     template<typename Field>
     Field read(std::fstream &fs) {
-        Field field;
-        
-        fs.read(reinterpret_cast<char*>(&field), sizeof(Field));
+        Field field = {};
+    
+        if (fs.eof()) {
+            return field;
+        }
 
+        fs.read(reinterpret_cast<char*>(&field), sizeof(Field));
+    
         return field;
+    }
+
+    template<typename Field>
+    std::vector<Field> read(std::fstream &fs, int count) {
+        std::vector<Field> fields;
+
+        while ( (--count >= 0) && !fs.eof() ) {
+            fields.push_back(read<Field>(fs));
+        }
+
+        return fields;
     }
 
     std::vector<std::string> readTextures(std::fstream &fs, const Header &header);
 
-    struct Vertex {
-        float x, y, z;
+    template<typename Type, int Count>
+    struct Array {
+        Type values[Count] = {};
 
-        friend std::ostream& operator << (std::ostream &os, const Vertex &v) {
-            std::cout << v.x << ", " << v.y << ", " << v.z;
+        friend std::ostream& operator<< (std::ostream &os, const Array<Type, Count> &v) {
+            for (int i=0; i<Count - 1; i++) {
+                os << v.values[i] << ", ";
+            }
 
-            return os;
-        }
-    };
-
-    struct Face {
-        std::uint16_t v1, v2, v3;
-
-        friend std::ostream& operator << (std::ostream &os, const Face &f) {
-            std::cout << f.v1 << ", " << f.v2 << ", " << f.v3;
+            os << v.values[Count - 1];
 
             return os;
         }
     };
 
-    std::vector<Vertex> readVertices(std::fstream &fs, const Header &header);
-
-    std::vector<Face> readFaces(std::fstream &fs, const Header &header);
+    typedef Array<float, 3>            Vertex;
+    typedef Array<std::uint16_t, 3>    Face;
+    typedef Array<float, 2>            TexCoord;
 }
-
 
 #endif

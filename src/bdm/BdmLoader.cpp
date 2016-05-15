@@ -25,30 +25,4 @@ namespace bdm {
 
         return textures;
     }
-
-    std::vector<Vertex> readVertices(std::fstream &fs, const Header &header) {
-        std::vector<Vertex> floats;
-
-        int total = header.vertexCount;
-
-        while (total-- > 0) {
-            Vertex value = read<Vertex>(fs);
-            floats.push_back(value);
-        }
-
-        return floats;
-    }
-
-    std::vector<Face> readFaces(std::fstream &fs, const Header &header) {
-        std::vector<Face> faces;
-
-        int total = header.faceCount;
-
-        while (total-- > 0) {
-            auto face = read<Face>(fs);
-            faces.push_back(face);
-        }
-
-        return faces;
-    }
 }
