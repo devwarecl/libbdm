@@ -34,6 +34,46 @@ void export_(std::ostream &os, const bdm::BdmFile &model) {
         }
     }
 
+    // export vertex normals
+    for (auto &face : model.faces()) {
+
+        bdm::Vertex v[3];
+        for (int j=0; j<3; j++) {
+            v[j] = vertices[face.values[j]];
+        }
+
+        // compute v1 and v2
+        bdm::Vertex v1, v2;
+
+        for (int j=0; j<3; j++) {
+            v1.values[j] = v[1].values[j] - v[0].values[j];
+            v2.values[j] = v[2].values[j] - v[0].values[j];    
+        }
+
+        // compute cross product
+        bdm::Vertex n;
+        n.values[0] = v1.values[1]*v2.values[2] - v1.values[2]*v2.values[1];
+        n.values[1] = v1.values[2]*v2.values[0] - v1.values[0]*v2.values[2];
+        n.values[2] = v1.values[0]*v2.values[1] - v1.values[1]*v2.values[0];
+
+        // normalize the normal vector
+        float length = 0.0f;
+        for (int j=0; j<3; j++) {
+            length += n.values[j]*n.values[j];
+        }
+
+        for (int j=0; j<3; j++) {
+            n.values[j] /= std::sqrt(length);
+        }
+
+        // export the normal
+        for (int j=0; j<3; j++){
+            os << "vn ";
+            export_(os, n);
+            os << std::endl;
+        }
+    }
+
     // export texture coordinates
     for (auto &texcoord : model.texcoords()) {
         os << "vt ";
@@ -42,6 +82,8 @@ void export_(std::ostream &os, const bdm::BdmFile &model) {
 
         texcoord_.values[0] /= 32.0f;
         texcoord_.values[1] /= 64.0f;
+
+        texcoord_.values[0] = texcoord_.values[0];
 
         export_(os, texcoord_);
 
