@@ -8,6 +8,7 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <cmath>
 
 #include "bdm/BdmLoader.hpp"
 #include "bdm/BdmFile.hpp"
