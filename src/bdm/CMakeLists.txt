@@ -2,6 +2,8 @@
 set (target bdm)
 set (sources BdmLoader.hpp BdmLoader.cpp BdmFile.hpp BdmFile.cpp)
 
+source_group(\\ FILES ${sources})
+
 add_library(${target} ${sources})
 
 install (DIRECTORY . DESTINATION include/bdm FILES_MATCHING PATTERN "*.hpp")
