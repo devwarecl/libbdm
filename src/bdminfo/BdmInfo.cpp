@@ -15,9 +15,11 @@
 
 template<typename Type, int Count>
 void export_(std::ostream &os, const bdm::Array<Type, Count> &array_) {
-    for (auto value : array_.values) {
-        os << value << " ";
+    for (int i=0; i<Count-1; i++) {
+        os << array_.values[i] << " ";
     }
+
+    os << array_.values[Count-1];
 }
 
 void export_(std::ostream &os, const bdm::BdmFile &model) {

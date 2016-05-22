@@ -3,7 +3,7 @@
 
 namespace bdm {
     std::vector<std::string> readTextures(std::istream &fs, const Header &header) {
-        std::vector<std::string> textures(header.textureCount);
+        std::vector<std::string> textures;
     
         // output texture filenames
         for (int i=0; i<header.textureCount; ++i) {
