@@ -35,6 +35,10 @@ namespace bdm {
     
     template<typename Field>
     Field read(std::istream &fs) {
+        if (fs.eof()) {
+            throw std::runtime_error("EOF reached.");
+        }
+
         Field field = {};
     
         if (fs.eof()) {
@@ -48,6 +52,8 @@ namespace bdm {
 
     template<typename Field>
     std::vector<Field> read(std::istream &fs, int count) {
+        assert(fs.tellg() >= 0);
+
         std::vector<Field> fields;
 
         while ( (--count >= 0) && !fs.eof() ) {
