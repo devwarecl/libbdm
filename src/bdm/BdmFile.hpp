@@ -13,6 +13,7 @@ namespace bdm {
         std::vector<bdm::Vertex> vertices;
         std::vector<bdm::Face> faces;
         std::vector<bdm::TexCoord> texcoords;
+        std::vector<std::uint16_t> texturefaces;
     };
 
     class BdmFile {
