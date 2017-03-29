@@ -1,6 +1,6 @@
 
 set (target bdm)
-set (sources BdmLoader.hpp BdmLoader.cpp BdmFile.hpp BdmFile.cpp)
+set (sources BdmLoader.hpp BdmFile.hpp Foo.cpp)
 
 source_group(\\ FILES ${sources})
 
